@@ -1,0 +1,29 @@
+version: "3"
+
+services: 
+  web:
+    stdin_open: true
+    build: 
+      # conext - specifying where we want this image to pull files/folders from
+      # this needs to look in the same directory the docker-compose.yml is in
+      context: .
+      # specify dockerfile to use inside the context directory
+      dockerfile: Dockerfile.dev
+    ports: 
+      - "3000:3000"
+    volumes: 
+      # do not map node_modules in the client dir to the container dir
+      # instead this will hold node_modules inside the container only
+      - /app/node_modules
+      # map everything in our dir to the app in our contianer. This creates a reference to the files and folders in the app directory
+      - .:/app
+  tests:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes: 
+      - /app/node_modules
+      - .:/app
+    command: ["yarn", "test"]  
+     
+  
